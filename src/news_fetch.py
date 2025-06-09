@@ -20,15 +20,20 @@ class News:
         self.__page = page
         self.__page_size = page_size
 
+    def __get_date_range(self):
+        today = datetime.now().date()
+        last_saturday = today - timedelta(days=today.weekday() + 2)
+        next_friday = last_saturday + timedelta(days=6)
+
+        return last_saturday, next_friday
+
     def __all_articles(self):
         try:
-            to = datetime.now().date()
-            from_param = to - timedelta(days=7)
-
+            from_date, to_date = self.__get_date_range()
             articles = self.newsapi.get_everything(
                 sources=self.__source,
-                from_param=from_param,
-                to=to,
+                from_param=from_date,
+                to=to_date,
                 language=self.__language,
                 sort_by=self.__sort_by,
                 page=self.__page,
@@ -38,9 +43,10 @@ class News:
             return articles.get("articles", [])
         except Exception as e:
             print(f"Error fetching articles: {e}")
+
             return []
 
-    def all_articles(self):
+    def articles(self):
         return self.__all_articles()
 
 
@@ -49,4 +55,4 @@ if __name__ == "__main__":
     newsapi = NewsApiClient(api_key=settings.NEWS_API_KEY)
     news = News(newsapi=newsapi)
 
-    print(news.all_articles())
+    print(news.articles())
