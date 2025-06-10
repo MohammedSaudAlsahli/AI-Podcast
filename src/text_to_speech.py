@@ -22,7 +22,6 @@ class TTS:
 
     def __tts_result(self):
         client = Client(self.client)
-        client.chat
         result = client.predict(
             prompt=self.prompt,
             voice=self.voice,
