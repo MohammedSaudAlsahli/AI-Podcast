@@ -6,6 +6,8 @@ from moviepy import (
 )
 from pathlib import Path
 
+from utils import TEST_AUDIO
+
 
 class PodcastGenerator:
     def __init__(
@@ -34,7 +36,7 @@ class PodcastGenerator:
 
 
 if __name__ == "__main__":
-    mp3_files = [
+    TEST_AUDIO = [
         "/private/var/folders/6g/pgyz9pk12_j3lsmmkwp0n25w0000gn/T/gradio/c88e3f45084f76f67b2692257d05ac40feff9eb1380503e9efda0818636db082/tmpmbvgwbmb.mp3",
         "/private/var/folders/6g/pgyz9pk12_j3lsmmkwp0n25w0000gn/T/gradio/7d43a8718de9a1ace173dc2d2aa839a7639c550a25ff5fa77b1faf41201b26e7/tmpk5aerjt8.mp3",
         "/private/var/folders/6g/pgyz9pk12_j3lsmmkwp0n25w0000gn/T/gradio/d0aff4360574af938ddcb7781e9f7f277d005503759759aba98c1d7b9f11b885/tmpsigi_9u6.mp3",
@@ -60,4 +62,4 @@ if __name__ == "__main__":
         "/private/var/folders/6g/pgyz9pk12_j3lsmmkwp0n25w0000gn/T/gradio/233bb66da88c2e235a5bcd5a16dab987a4d0838a958d727377873fde215f7f4b/tmpd88ibr_p.mp3",
         "/private/var/folders/6g/pgyz9pk12_j3lsmmkwp0n25w0000gn/T/gradio/b71edbe2314b48590fa7ead674b122f9e0c3e02013e642f3fb746884f62ec51d/tmp4af7gxcq.mp3",
     ]
-    PodcastGenerator(mp3_files=mp3_files).generate_podcast()
+    PodcastGenerator(mp3_files=TEST_AUDIO).generate_podcast()
