@@ -1,7 +1,5 @@
-from utils import Settings
 from newsapi import NewsApiClient
 from datetime import datetime, timedelta
-import json
 
 
 class News:
@@ -52,9 +50,11 @@ class News:
 
 
 if __name__ == "__main__":
+    from utils import Settings
+    from json import dump
+
     settings = Settings()
     newsapi = NewsApiClient(api_key=settings.NEWS_API_KEY)
     news = News(newsapi=newsapi)
-    with open("output.json", "w") as f:
-        json.dump(news.articles(), f, indent=4)
-    # print(news.articles())
+    with open("news-output.json", "w") as f:
+        dump(news.articles(), f, indent=4)
