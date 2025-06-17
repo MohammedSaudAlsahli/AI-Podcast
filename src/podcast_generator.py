@@ -6,7 +6,7 @@ from moviepy import (
 )
 from pathlib import Path
 
-from utils import TEST_AUDIO
+from src.utils import TEST_AUDIO
 
 
 class PodcastGenerator:
@@ -32,7 +32,7 @@ class PodcastGenerator:
             0, combined_audio.duration
         )
         final_video = looped_bg.with_audio(combined_audio)
-        final_video.write_videofile("looped_video_with_audio.mp4", fps=24)
+        final_video.write_videofile("{out}.mp4", fps=24)
 
 
 if __name__ == "__main__":

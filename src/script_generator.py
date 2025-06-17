@@ -1,97 +1,101 @@
-from utils import TEST_NEWS, SYSTEM_PROMPT
-from httpx import post
-from json import loads, JSONDecodeError
-import re
+from src.utils import SYSTEM_PROMPT
+import json
+import google.generativeai as genai
 
 
 class ScriptGenerator:
     def __init__(
         self,
         news: str,
-        openrouter_api_key: str,
+        google_api_key: str,
         system_prompt: str = SYSTEM_PROMPT,
-        model: str = "deepseek/deepseek-r1-0528-qwen3-8b:free",
-        site_url: str = "https://openrouter.ai/api/v1/chat/completions",
+        model: str = "models/gemini-1.5-flash",
     ):
         self.news = news
         self.model = model
-        self.site_url = site_url
         self.system_prompt = system_prompt
-        self.openrouter_api_key = openrouter_api_key
+        genai.configure(api_key=google_api_key)
+        self.client = genai
 
-    @staticmethod
-    def __sanitize_script(raw_script: str) -> str:
-        if raw_script.startswith("```json") and raw_script.endswith("```"):
-            raw_script = raw_script[7:-3].strip()
-
-        standardized_script = raw_script.replace("\r\n", "\n")
-        standardized_script = re.sub(
-            r"\n[\s\t]*\n", "\n", standardized_script, flags=re.MULTILINE
-        )
-        standardized_script = "\n".join(
-            line.strip() for line in standardized_script.split("\n")
-        )
-        standardized_script = re.sub(r",\s*([}\]])", r"\1", standardized_script)
-
-        return standardized_script.strip()
-
-    def __raw_podcast_script(self) -> str:
-        response = post(
-            url=self.site_url,
-            headers={
-                "Authorization": f"Bearer {self.openrouter_api_key}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "<YOUR_SITE_URL>",
-                "X-Title": "<YOUR_SITE_NAME>",
-            },
-            data=dumps(
-                {
-                    "model": self.model,
-                    "messages": [
-                        {
-                            "role": "system",
-                            "content": self.system_prompt,
-                        },
-                        {
-                            "role": "user",
-                            "content": self.news,
-                        },
-                    ],
-                }
-            ),
-        )
-        cleaned_script = self.__sanitize_script(
-            response.json()
-            .get("choices", [{}])[0]
-            .get("message", {})
-            .get("content", "")
-        )
-
+    def __extract_json(self, text: str) -> dict:
+        """Extracts JSON from markdown or plain text response."""
         try:
-            return loads(cleaned_script)
-        except JSONDecodeError as e:
+            if "```json" in text:
+                text = text.split("```json")[1].split("```")[0].strip()
+            return json.loads(text)
+        except json.JSONDecodeError:
+            return {"error": "Invalid JSON format", "raw_response": text}
+
+    def __generate_response(self) -> dict:
+        """Generates and validates the JSON response."""
+        try:
+            model = self.client.GenerativeModel(
+                model_name=self.model, system_instruction=self.system_prompt
+            )
+
+            response = model.generate_content(
+                contents=[
+                    {
+                        "role": "user",
+                        "parts": [
+                            {
+                                "text": f"Convert this news into podcast script JSON:\n{self.news}"
+                            }
+                        ],
+                    }
+                ],
+                generation_config={
+                    "temperature": 0.3,
+                    "response_mime_type": "application/json",
+                    "max_output_tokens": 2000,
+                },
+            )
+
+            if not response.candidates:
+                return {"error": "No response generated", "metadata": {}}
+
+            json_response = self.__extract_json(response.text)
+
             return {
-                "Error parsing JSON": {e},
-                "cleaned_script": cleaned_script,
+                "data": json_response,
+                "metadata": {
+                    "model": self.model,
+                    "tokens": response.usage_metadata.total_token_count,
+                    "finish_reason": response.candidates[0].finish_reason.name,
+                },
             }
 
-    def result(self):
-        return self.__raw_podcast_script()
+        except Exception as e:
+            return {
+                "error": str(e),
+                "metadata": {"model": self.model, "exception_type": type(e).__name__},
+            }
+
+    def result(self) -> dict:
+        """Returns the final JSON-formatted result."""
+        response = self.__generate_response()
+
+        if "error" in response:
+            return {
+                "status": "error",
+                "message": response["error"],
+                "metadata": response.get("metadata", {}),
+            }
+        else:
+            return response.get("data")
 
 
 if __name__ == "__main__":
-    from json import dumps, dump
-    from utils import Settings
-
-    settings = Settings()
-
-    script_generator = ScriptGenerator(
-        news=TEST_NEWS,
-        openrouter_api_key=settings.OPENROUTER_API_KEY,
+    news_article = "NASA announces discovery of water on Mars..."
+    generator = ScriptGenerator(
+        news=news_article,
+        google_api_key="YOUR_API_KEY",
     )
-    podcast_script = script_generator.result()
-    print((podcast_script))
 
-    print(type(podcast_script))
-    with open("podcast-script-output.json", "w", encoding="utf-8") as f:
-        dump(podcast_script, f, indent=4, ensure_ascii=False)
+    result = generator.result()
+    print(
+        json.dumps(
+            result,
+            indent=2,
+        )
+    )

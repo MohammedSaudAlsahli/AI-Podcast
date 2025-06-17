@@ -12,7 +12,7 @@ class News:
         page: int = 1,
         page_size: int = 10,
     ):
-        self.newsapi = newsapi
+        self.newsapi = NewsApiClient(api_key=newsapi)
         self.__source = source
         self.__language = language
         self.__sort_by = sort_by
@@ -50,11 +50,6 @@ class News:
 
 
 if __name__ == "__main__":
-    from utils import Settings
-    from json import dump
-
-    settings = Settings()
-    newsapi = NewsApiClient(api_key=settings.NEWS_API_KEY)
-    news = News(newsapi=newsapi)
-    with open("news-output.json", "w") as f:
-        dump(news.articles(), f, indent=4)
+    # newsapi = NewsApiClient(api_key=settings.NEWS_API_KEY)
+    news = News(newsapi="NEWS_API_KEY").articles()
+    print(news)

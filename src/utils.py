@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     TOKEN_URI: str
     REFRESH_TOKEN: str
     ACCESS_TOKEN: str
+    GOOGLE_API_KEY: str
     debug: bool = False
 
     class Config:
@@ -94,9 +95,9 @@ SYSTEM_PROMPT = """You are a world-class podcast producer for the weekly show "T
   ---
 
   ## OUTPUT FORMAT:
-  The output must be a valid JSON object with the following structure:
+  The output must be a in JSON object with the following structure:
 
-  ```json
+
   {
     "podcastTitle": "The Weekly Roundup",
     "episodeTitle": "Your clever AI-generated episode title here",
@@ -143,7 +144,7 @@ SYSTEM_PROMPT = """You are a world-class podcast producer for the weekly show "T
         "line": "Ah, yes! Mapping the universe. You know, Emma, if I ever disappeared, I’d probably be hiding in that observatory. Just me, the stars, and no Wi-Fi."
       }
     ]
-}```"""
+}"""
 
 TEST_NEWS = """ [
     {

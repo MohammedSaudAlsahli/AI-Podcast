@@ -1,3 +1,4 @@
+from asyncio import sleep
 from gradio_client import Client
 
 
@@ -30,11 +31,32 @@ class TTS:
         )
         return result
 
-    def female(self):
+    def __female(self):
         return self.__tts_result(voice="alloy")
 
-    def male(self):
+    def __male(self):
         return self.__tts_result(voice="dan")
+
+    def generateAudio(self):
+        mp3_files = []
+
+        for script in self.prompt.get("script", []):
+            prompt = script.get("line", "")
+            if script.get("host") == "Emma":
+                audio = TTS(prompt=prompt).__female()
+                if audio[0] is None:
+                    print(f"Retrying female voice for: {prompt}")
+                    audio = TTS(prompt=prompt).__female()
+            else:
+                audio = TTS(prompt=prompt).__male()
+
+                if audio[0] is None:
+                    print(f"Retrying male voice for: {prompt}")
+                    audio = TTS(prompt=prompt).__male()
+
+            mp3_files.append(audio[0])
+
+        return mp3_files
 
 
 if __name__ == "__main__":

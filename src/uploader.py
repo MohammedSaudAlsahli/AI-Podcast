@@ -4,12 +4,6 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from dotenv import set_key
-# from utils import Settings
-# from pathlib import Path
-
-
-# settings = Settings()
-# ENV_PATH = settings.Config.env_file
 
 
 class YouTubeUploader:
@@ -41,16 +35,16 @@ class YouTubeUploader:
         set_key(str(self.env_path), "ACCESS_TOKEN", token.token)
         set_key(str(self.env_path), "REFRESH_TOKEN", token.refresh_token)
 
-    def get_authenticated_service(self):
+    def __get_authenticated_service(self):
         creds = None
 
-        if settings.ACCESS_TOKEN and settings.REFRESH_TOKEN:
+        if "settings.ACCESS_TOKEN" and "settings.REFRESH_TOKEN":
             creds = Credentials(
-                token=settings.ACCESS_TOKEN,
-                refresh_token=settings.REFRESH_TOKEN,
-                token_uri=settings.TOKEN_URI,
-                client_id=settings.GOOGLE_CLIENT_ID,
-                client_secret=settings.GOOGLE_CLIENT_SECRET,
+                token="settings.ACCESS_TOKEN",
+                refresh_token="settings.REFRESH_TOKEN",
+                token_uri="settings.TOKEN_URI",
+                client_id="settings.GOOGLE_CLIENT_ID",
+                client_secret="settings.GOOGLE_CLIENT_SECRET",
                 scopes=self.SCOPES,
             )
             if creds.expired and creds.refresh_token:
@@ -66,7 +60,7 @@ class YouTubeUploader:
 
         return build("youtube", "v3", credentials=creds)
 
-    def upload_video(self, youtube, file_path, metadata):
+    def __upload_video(self, youtube, file_path, metadata):
         media = MediaFileUpload(file_path, chunksize=-1, resumable=True)
         request = youtube.videos().insert(
             part="snippet,status", body=metadata, media_body=media
@@ -83,12 +77,17 @@ class YouTubeUploader:
         print(f"🔗 URL: https://youtu.be/{response['id']}")
         return response
 
+    def upload(self, metadata, video_path):
+        youtube = self.__get_authenticated_service()
+        self.__upload_video(
+            youtube=youtube,
+            file_path=video_path,
+            metadata=metadata,
+        )
+
 
 if __name__ == "__main__":
-    from utils import Settings, BG_VIDEO
-
-    settings = Settings()
-    ENV_PATH = settings.Config.env_file
+    ENV_PATH = ".env file"
 
     VIDEO_METADATA = {
         "snippet": {
@@ -107,12 +106,15 @@ if __name__ == "__main__":
         print("🚀 Starting YouTube upload...")
         uploader = YouTubeUploader(
             env_path=ENV_PATH,
-            google_client_id=settings.GOOGLE_CLIENT_ID,
-            google_client_secret=settings.GOOGLE_CLIENT_SECRET,
-            google_project_id=settings.GOOGLE_PROJECT_ID,
+            google_client_id="GOOGLE_CLIENT_ID",
+            google_client_secret="GOOGLE_CLIENT_SECRET",
+            google_project_id="GOOGLE_PROJECT_ID",
         )
-        youtube = uploader.get_authenticated_service()
+
         print("🔐 Authenticated!")
-        uploader.upload_video(youtube, BG_VIDEO, VIDEO_METADATA)
+        uploader.upload(
+            metadata="VIDEO_METADATA",
+            video_path="BG_VIDEO",
+        )
     except Exception as e:
         print(f"❌ Error: {e}")
