@@ -5,12 +5,12 @@ from datetime import datetime, timedelta
 class News:
     def __init__(
         self,
-        newsapi: NewsApiClient,
+        newsapi: str,
         source: str = "bbc-news,cnn",
         language: str = "en",
         sort_by: str = "popularity",
         page: int = 1,
-        page_size: int = 10,
+        page_size: int = 50,
     ):
         self.newsapi = NewsApiClient(api_key=newsapi)
         self.__source = source
@@ -47,9 +47,3 @@ class News:
 
     def articles(self):
         return self.__all_articles()
-
-
-if __name__ == "__main__":
-    # newsapi = NewsApiClient(api_key=settings.NEWS_API_KEY)
-    news = News(newsapi="NEWS_API_KEY").articles()
-    print(news)

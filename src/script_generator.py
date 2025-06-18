@@ -83,19 +83,3 @@ class ScriptGenerator:
             }
         else:
             return response.get("data")
-
-
-if __name__ == "__main__":
-    news_article = "NASA announces discovery of water on Mars..."
-    generator = ScriptGenerator(
-        news=news_article,
-        google_api_key="YOUR_API_KEY",
-    )
-
-    result = generator.result()
-    print(
-        json.dumps(
-            result,
-            indent=2,
-        )
-    )

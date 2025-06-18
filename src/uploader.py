@@ -13,8 +13,14 @@ class YouTubeUploader:
         google_client_id: str,
         google_client_secret: str,
         google_project_id: str,
+        access_token: str,
+        refresh_token: str,
+        token_uri: str,
     ):
         self.env_path = env_path
+        self.access_token = access_token
+        self.token_uri = token_uri
+        self.refresh_token = refresh_token
         self.google_client_id = google_client_id
         self.google_client_secret = google_client_secret
         self.google_project_id = google_project_id
@@ -40,11 +46,11 @@ class YouTubeUploader:
 
         if "settings.ACCESS_TOKEN" and "settings.REFRESH_TOKEN":
             creds = Credentials(
-                token="settings.ACCESS_TOKEN",
-                refresh_token="settings.REFRESH_TOKEN",
+                client_id=self.google_client_id,
+                client_secret=self.google_client_secret,
+                token=self.access_token,
+                refresh_token=self.refresh_token,
                 token_uri="settings.TOKEN_URI",
-                client_id="settings.GOOGLE_CLIENT_ID",
-                client_secret="settings.GOOGLE_CLIENT_SECRET",
                 scopes=self.SCOPES,
             )
             if creds.expired and creds.refresh_token:
