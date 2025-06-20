@@ -1,6 +1,12 @@
 from src.utils import SYSTEM_PROMPT
 import json
 import google.generativeai as genai
+import logging
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
 class ScriptGenerator:
@@ -17,7 +23,7 @@ class ScriptGenerator:
         genai.configure(api_key=google_api_key)
         self.client = genai
 
-    def __extract_json(self, text: str) -> dict:
+    def __extract_json(self, text: str):
         """Extracts JSON from markdown or plain text response."""
         try:
             if "```json" in text:
@@ -26,7 +32,7 @@ class ScriptGenerator:
         except json.JSONDecodeError:
             return {"error": "Invalid JSON format", "raw_response": text}
 
-    def __generate_response(self) -> dict:
+    def __generate_response(self):
         """Generates and validates the JSON response."""
         try:
             model = self.client.GenerativeModel(
@@ -71,7 +77,7 @@ class ScriptGenerator:
                 "metadata": {"model": self.model, "exception_type": type(e).__name__},
             }
 
-    def result(self) -> dict:
+    def result(self):
         """Returns the final JSON-formatted result."""
         response = self.__generate_response()
 

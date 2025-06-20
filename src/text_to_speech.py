@@ -1,5 +1,11 @@
 from gradio_client import Client
 import time
+import logging
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
 class TTS:
@@ -45,13 +51,13 @@ class TTS:
             if script.get("host") == "Emma":
                 audio = TTS(prompt=prompt).__female()
                 if audio[0] is None:
-                    print(f"Retrying female voice for: {prompt}")
+                    logger.warning(f"Retrying female voice for: {prompt}")
                     time.sleep(1)
                     audio = TTS(prompt=prompt).__female()
             else:
                 audio = TTS(prompt=prompt).__male()
                 if audio[0] is None:
-                    print(f"Retrying male voice for: {prompt}")
+                    logger.warning(f"Retrying male voice for: {prompt}")
                     time.sleep(1)
                     audio = TTS(prompt=prompt).__male()
 

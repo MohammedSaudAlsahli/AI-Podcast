@@ -5,6 +5,14 @@ from src.podcast_generator import PodcastGenerator
 from src.uploader import YouTubeUploader
 from src.utils import Settings, ROOT_PATH
 import re
+import os
+import logging
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 
 def main():
@@ -12,7 +20,7 @@ def main():
 
     ENV_PATH = settings.Config.env_file
 
-    news = News(newsapi=settings.NEWS_API_KEY).articles()
+    news = News(newsapi_key=settings.NEWS_API_KEY).articles()
 
     script_generator = ScriptGenerator(
         news=str(news),
@@ -38,7 +46,6 @@ def main():
     for file in mp3_files:
         if file is None:
             mp3_files = TTS(prompt=podcast_script).generateAudio()
-    print(mp3_files)
 
     PodcastGenerator(
         mp3_files=mp3_files,
@@ -53,7 +60,7 @@ def main():
             "categoryId": "22",
         },
         "status": {
-            "privacyStatus": "private",
+            "privacyStatus": "public",
             "selfDeclaredMadeForKids": False,
         },
     }
@@ -68,10 +75,16 @@ def main():
         refresh_token=settings.REFRESH_TOKEN,
     )
 
+    video_path = ROOT_PATH / "assets" / f"{file_output_name}.mp4"
+
     uploader.upload(
         metadata=VIDEO_METADATA,
-        video_path=ROOT_PATH / "assets" / f"{file_output_name}.mp4",
+        video_path=video_path,
     )
+
+    if video_path.exists():
+        os.remove(video_path)
+        logger.info(f"Deleted video file: {video_path}")
 
 
 if __name__ == "__main__":

@@ -4,6 +4,12 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from dotenv import set_key
+import logging
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
 class YouTubeUploader:
@@ -76,11 +82,11 @@ class YouTubeUploader:
         while response is None:
             status, response = request.next_chunk()
             if status:
-                print(f"📤 Upload progress: {int(status.progress() * 100)}%")
+                logger.info(f"📤 Upload progress: {int(status.progress() * 100)}%")
 
-        print("✅ Upload complete!")
-        print(f"🎬 Title: {response['snippet']['title']}")
-        print(f"🔗 URL: https://youtu.be/{response['id']}")
+        logger.info("✅ Upload complete!")
+        logger.info(f"🎬 Title: {response['snippet']['title']}")
+        logger.info(f"🔗 URL: https://youtu.be/{response['id']}")
         return response
 
     def upload(self, metadata, video_path):
@@ -90,37 +96,3 @@ class YouTubeUploader:
             file_path=video_path,
             metadata=metadata,
         )
-
-
-if __name__ == "__main__":
-    ENV_PATH = ".env file"
-
-    VIDEO_METADATA = {
-        "snippet": {
-            "title": "My AI-Podcast Episode",
-            "description": "Uploaded via Python with .env token caching.",
-            "tags": ["podcast", "ai", "python"],
-            "categoryId": "22",
-        },
-        "status": {
-            "privacyStatus": "private",
-            "selfDeclaredMadeForKids": False,
-        },
-    }
-
-    try:
-        print("🚀 Starting YouTube upload...")
-        uploader = YouTubeUploader(
-            env_path=ENV_PATH,
-            google_client_id="GOOGLE_CLIENT_ID",
-            google_client_secret="GOOGLE_CLIENT_SECRET",
-            google_project_id="GOOGLE_PROJECT_ID",
-        )
-
-        print("🔐 Authenticated!")
-        uploader.upload(
-            metadata="VIDEO_METADATA",
-            video_path="BG_VIDEO",
-        )
-    except Exception as e:
-        print(f"❌ Error: {e}")

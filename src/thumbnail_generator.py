@@ -1,4 +1,10 @@
 from gradio_client import Client
+import logging
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
 class ThumbnailGenerator:
@@ -11,8 +17,7 @@ class ThumbnailGenerator:
         self.client = client
         self.theclient = Client(self.client)
 
-    def __inhance_prompt(self) -> str:
-        # client = Client(self.client)
+    def __inhance_prompt(self):
         prompt_inh = self.theclient.predict(
             current_prompt=self.current_prompt,
             improvement_request=self.current_prompt,
@@ -20,8 +25,7 @@ class ThumbnailGenerator:
         )
         return prompt_inh[0]
 
-    def generate_thumbnail(self) -> str:
-        # client = Client(self.client)
+    def generate_thumbnail(self):
         improved_prompt = self.__inhance_prompt()
         thumbnail = self.theclient.predict(
             prompt=improved_prompt,
@@ -30,11 +34,3 @@ class ThumbnailGenerator:
             api_name="/single_image_generation",
         )
         return thumbnail[0]
-
-
-if __name__ == "__main__":
-    thumbnail_generator = ThumbnailGenerator(
-        current_prompt="Cricket Shenanigans, Cosmic Mapping, and College Paydays!!",
-    )
-    thumbnail = thumbnail_generator.generate_thumbnail()
-    print(thumbnail)

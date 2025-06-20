@@ -5,6 +5,12 @@ from moviepy import (
     concatenate_audioclips,
 )
 from src.utils import BG_VIDEO, ROOT_PATH
+import logging
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
 class PodcastGenerator:

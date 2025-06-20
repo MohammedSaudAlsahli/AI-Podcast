@@ -1,18 +1,32 @@
 from newsapi import NewsApiClient
 from datetime import datetime, timedelta
+import logging
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
 class News:
     def __init__(
         self,
-        newsapi: str,
+        newsapi_key: str,
         source: str = "bbc-news,cnn",
         language: str = "en",
         sort_by: str = "popularity",
         page: int = 3,
         page_size: int = 30,
     ):
-        self.newsapi = NewsApiClient(api_key=newsapi)
+        """
+        Initialize News object for fetching news from NewsAPI.
+        """
+
+        try:
+            self.newsapi = NewsApiClient(api_key=newsapi_key)
+        except Exception as e:
+            logging.error(f"Failed to initialize NewsApiClient: {e}")
+            raise
         self.__source = source
         self.__language = language
         self.__sort_by = sort_by
@@ -27,6 +41,9 @@ class News:
         return last_saturday, next_friday
 
     def __all_articles(self):
+        """
+        Fetch articles using the News API within the calculated date range.
+        """
         try:
             from_date, to_date = self.__get_date_range()
             articles = self.newsapi.get_everything(
@@ -41,9 +58,12 @@ class News:
 
             return articles.get("articles", [])
         except Exception as e:
-            print(f"Error fetching articles: {e}")
+            logging.error(f"Error fetching articles: {e}")
 
             return []
 
     def articles(self):
+        """
+        Public method to retrieve articles.
+        """
         return self.__all_articles()
