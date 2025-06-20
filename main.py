@@ -5,7 +5,6 @@ from src.podcast_generator import PodcastGenerator
 from src.uploader import YouTubeUploader
 from src.utils import Settings, ROOT_PATH
 import re
-# from pathlib import Path
 
 
 def main():
@@ -30,15 +29,16 @@ def main():
         [f'[{line["host"]}]: "{line["line"]}"' for line in podcast_script["script"]]
     )
 
-    print(formatted_description)
-
     file_output_name = re.sub(
         r"[^\w]+",
         "_",
         podcast_title,
     )
-
     mp3_files = TTS(prompt=podcast_script).generateAudio()
+    for file in mp3_files:
+        if file is None:
+            mp3_files = TTS(prompt=podcast_script).generateAudio()
+    print(mp3_files)
 
     PodcastGenerator(
         mp3_files=mp3_files,

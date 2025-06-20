@@ -50,7 +50,7 @@ class YouTubeUploader:
                 client_secret=self.google_client_secret,
                 token=self.access_token,
                 refresh_token=self.refresh_token,
-                token_uri="settings.TOKEN_URI",
+                token_uri=self.token_uri,
                 scopes=self.SCOPES,
             )
             if creds.expired and creds.refresh_token:

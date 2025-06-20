@@ -45,9 +45,9 @@ class ScriptGenerator:
                     }
                 ],
                 generation_config={
-                    "temperature": 0.3,
+                    "temperature": 0.85,
                     "response_mime_type": "application/json",
-                    "max_output_tokens": 2000,
+                    "max_output_tokens": 2500,
                 },
             )
 

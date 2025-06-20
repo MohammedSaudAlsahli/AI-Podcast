@@ -20,7 +20,7 @@ class PodcastGenerator:
         self.bg_video = bg_video
         self.fps = fps
 
-    def generate_podcast(self) -> None:
+    def generate_podcast(self):
         audio_clips = [AudioFileClip(mp3_file) for mp3_file in self.mp3_files]
         combined_audio = concatenate_audioclips(audio_clips)
         video_path = self.bg_video

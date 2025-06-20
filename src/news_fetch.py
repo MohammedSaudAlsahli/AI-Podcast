@@ -9,8 +9,8 @@ class News:
         source: str = "bbc-news,cnn",
         language: str = "en",
         sort_by: str = "popularity",
-        page: int = 1,
-        page_size: int = 50,
+        page: int = 3,
+        page_size: int = 30,
     ):
         self.newsapi = NewsApiClient(api_key=newsapi)
         self.__source = source
