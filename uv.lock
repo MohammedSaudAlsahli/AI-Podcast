@@ -21,7 +21,6 @@ dependencies = [
     { name = "google-generativeai" },
     { name = "gradio-client" },
     { name = "moviepy" },
-    { name = "newsapi" },
     { name = "newsapi-python" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
@@ -37,7 +36,6 @@ requires-dist = [
     { name = "google-generativeai", specifier = ">=0.8.5" },
     { name = "gradio-client", specifier = ">=1.10.2" },
     { name = "moviepy", specifier = ">=2.2.1" },
-    { name = "newsapi", specifier = ">=0.1.1" },
     { name = "newsapi-python", specifier = ">=0.2.7" },
     { name = "pydantic", specifier = ">=2.11.5" },
     { name = "pydantic-settings", specifier = ">=2.9.1" },
@@ -554,18 +552,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/de/61/15f9476e270f64c78a834e7459ca045d669f869cec24eed26807b8cd479d/moviepy-2.2.1.tar.gz", hash = "sha256:c80cb56815ece94e5e3e2d361aa40070eeb30a09d23a24c4e684d03e16deacb1", size = 58431438, upload-time = "2025-05-21T19:31:52.601Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9a/73/7d3b2010baa0b5eb1e4dfa9e4385e89b6716be76f2fa21a6c0fe34b68e5a/moviepy-2.2.1-py3-none-any.whl", hash = "sha256:6b56803fec2ac54b557404126ac1160e65448e03798fa282bd23e8fab3795060", size = 129871, upload-time = "2025-05-21T19:31:50.11Z" },
-]
-
-[[package]]
-name = "newsapi"
-version = "0.1.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/07/23/5f829dbb4e74fa9e8674f9ecaad520ca81b067e05a14ab4403751f42d1c0/newsapi-0.1.1.tar.gz", hash = "sha256:ba6eae31d66f8a804134779c4f4a984fea90ef77be20dba40c2808c75042a69a", size = 7194, upload-time = "2017-03-28T22:10:14.679Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/56/70/df0dd31067f03703d06f66b6c3f324915bd43bc8a597ee1a7eef27c9e622/newsapi-0.1.1-py2.py3-none-any.whl", hash = "sha256:baef702f6e29fc2736932858528d94f18b2baaef9d330018ba78369e005e1df4", size = 4127, upload-time = "2017-03-28T22:10:12.306Z" },
 ]
 
 [[package]]
