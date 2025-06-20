@@ -2,8 +2,8 @@ name: AI Podcast Automation
 
 on:
   schedule:
-    - cron: "0 6 * * *" # Runs every day at 6 AM UTC
-  workflow_dispatch: # Enables manual triggering
+    - cron: "0 6 * * *"  # Runs daily at 6 AM UTC
+  workflow_dispatch:      # Allows manual run from GitHub UI
 
 jobs:
   run-script:
@@ -28,14 +28,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install uv
+      - name: Install dependencies with pip
         run: |
-          curl -Ls https://astral.sh/uv/install.sh | bash
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-
-      - name: Install Dependencies with uv
-        run: |
-          uv pip install --system -r requirements.txt
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Run script
         run: python main.py
